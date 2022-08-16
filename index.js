@@ -6,7 +6,7 @@ const Intern = require('./lib/Intern');
 const emailValidator = require('email-validator');
 
 // Manager
-const managerPrompt = inquirer.prompt([
+const managerPrompt = [
     {
         type: "input",
         name: 'name',
@@ -45,7 +45,7 @@ const managerPrompt = inquirer.prompt([
     },
     {
         type: 'input',
-        name: 'office number',
+        name: 'officenumber',
         message: "What is the office number for the Manager",
         validate: (answer) => {
             if(answer) {
@@ -61,9 +61,9 @@ const managerPrompt = inquirer.prompt([
         message: "Add another employee?",
         choices: ['Yes', 'No']
     }
-])
+]
 // Engineer
-const engineerPrompt = inquirer.prompt([
+const engineerPrompt = [
     {
         type: "input",
         name: 'name',
@@ -118,9 +118,9 @@ const engineerPrompt = inquirer.prompt([
         message: "Add another employee?",
         choices: ['Yes', 'No']
     }
-])
+]
 // Intern
-const internPrompt = inquirer.prompt([
+const internPrompt = [
     {
         type: "input",
         name: 'name',
@@ -175,4 +175,68 @@ const internPrompt = inquirer.prompt([
         message: "Add another employee?",
         choices: ['Yes', 'No']
     }
-])
+]
+
+// Choose role
+const pickRole = {
+    type: 'list',
+    name: 'selectRole',
+    message: 'Select what role is being added',
+    choices: ['Manager', 'Engineer', 'Intern']
+}
+
+function writeToFile(filename, data) {
+    fs.writeFile(filename, data, err => {
+        if(err) {
+            console.log(err);
+        } else {
+            console.log('File created');
+        }
+    })
+}
+
+let teamArray = [];
+let oneManager = true;
+
+function start() {
+    inquirer
+    .prompt(pickRole)
+    .then((answers) => {
+        if(answers.selectRole === 'Manager') {
+            if(oneManager === false) {
+                console.log('Only one Manager');
+                return start();
+            }
+            oneManager = false;
+            inquirer.prompt(managerPrompt)
+            .then((data) => {
+                teamArray.push(new Manager(data.name, data.id, data.email, data.officenumber));
+                if (data.addEmployee === 'Yes') {
+                    return start();
+                }
+                writeToFile('./dist/index.html', generatePage(teamArray));
+            });
+        }
+        if(answers.selectRole === 'Engineer') {
+            inquirer.prompt(engineerPrompt)
+            .then((data) => {
+                teamArray.push(new Engineer(data.name, data.id, data.email, data.github));
+                if(data.addEmployee === 'Yes') {
+                    return start();
+                }
+                writeToFile('./dist/index.html', generatePage(teamArray));
+            });
+        }
+        if(answers.selectRole === 'Intern') {
+            inquirer.prompt(internPrompt)
+            .then((data) => {
+                teamArray.push(new Intern(data.name, data.id, data.email, data.school));
+                if(data.addEmployee === 'Yes') {
+                    return start()
+                }
+                writeToFile('./dist/index.html', generatePage(teamArray));
+            })
+        }
+    })
+}
+start();

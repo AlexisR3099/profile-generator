@@ -1,5 +1,5 @@
 const Manager = require('../lib/Manager');
-const manager = new Manager('name', 'id', 'email', 'office number');
+const manager = new Manager('name', 'id', 'email', 'officenumber');
 
 test('manager name', () => {
     expect(manager.name).toBe('name');
@@ -14,7 +14,7 @@ test('manager email', () => {
 })
 
 test('adds office number', () => {
-    expect(manager.officeNumber).toBe('office number');
+    expect(manager.officeNumber).toBe('officenumber');
 })
 
 test('getRole() returns Manager', () => {
