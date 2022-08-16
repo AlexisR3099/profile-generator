@@ -4,6 +4,7 @@ const Manager = require('./lib/Manager');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const emailValidator = require('email-validator');
+const generatePage = require('./src/generate-page');
 
 // Manager
 const managerPrompt = [
